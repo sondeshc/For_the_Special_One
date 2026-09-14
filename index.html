@@ -587,12 +587,11 @@ TOGETHER:
 -->
 
 <body>
-<b>
 <div class="chapter-progress"><span id="chapterProgress"></span></div>
 <div id="particles"></div>
 
 <audio id="music" loop preload="auto">
- 
+
   <source src="Christina Perri - A Thousand Years (Lyrics).mp3" type="audio/mpeg">
 </audio>
 
@@ -671,7 +670,7 @@ TOGETHER:
         <h3>The Promise Night hehehe😁</h3>
         <p>Mutu, tyo din yaad xa ni…? 🥺❤️
 Jun din maile tapailai kati dherai kura promise gareko thiye.
-Maile bhaneko thiye ni—“Tapailai kahilai xordaina, jiwan bhari tapai ko saath dinxu.” 🤝❤️
+Maile bhaneko thiye ni—"Tapailai kahilai xordaina, jiwan bhari tapai ko saath dinxu." 🤝❤️
 
 Tyo din maile boleka kura haru khali words matra thiyenan.
 Tyo mero mann bata niskeko, tapai prati ko sacho ra purest feelings thiyo. 🫶🏻
@@ -686,7 +685,7 @@ I love you forever ❤️‍🩹♾️💖
 Ra mutu, jindagi jasto sukai mod lios,
 maile tyo din gareko promise aaja pani mero lagi ustai xa. ♾️❤️</p>
       </div>
-      <div class="story-image"><img src="WhatsApp Image 2026-09-01 at 9.00.13 PM.jpeg" alt="Promise Day"><div class="polaroid-caption"🥹💖❤️</div></div>
+      <div class="story-image"><img src="WhatsApp Image 2026-09-01 at 9.00.13 PM.jpeg" alt="Promise Day"><div class="polaroid-caption">🥹💖❤️</div></div>
     </article>
 
     <article class="story-card">
@@ -745,7 +744,7 @@ Tyo kura sunera tapai kati dherai hasnuhunthiyo ni… ❤️
 Aile samjhida pani malai tapai ko tyo haso yaad aauxa ni mutu... 🥹💗</p>
 
         <p>Ani arko kura… mom sanga ko tyo kura... 😂
-Khai k kura thiyo, tara maile afulai “Superman ho” ki testai k bhanekothiye 🦸‍♂️😂
+Khai k kura thiyo, tara maile afulai "Superman ho" ki testai k bhanekothiye 🦸‍♂️😂
 Tyo kura sunera pani tapai dherai hasnubhathyo 🤣❤️
 Kati sano-sano kura haru thiye, tara kina ho kina, aile samma pani mero man ma ekdam special memories banera baseka xan. 🥺💖</p>
         <p>Pahila meri budi lai kati dherai hasauthiye hai… 🥹❤️
@@ -1030,37 +1029,44 @@ const musicBtn=document.getElementById("musicBtn");
 const startBtn=document.getElementById("startBtn");
 let musicPlaying=false;
 
-async function startMusic(){
-  try{
-    await music.play();
-    musicPlaying=true;
-    musicBtn.textContent="🔊";
-    musicBtn.classList.add("playing");
-  }catch(e){
-    musicPlaying=false;
-    musicBtn.textContent="♫";
+function startMusic(){
+  // Fire-and-forget: never let audio issues (missing file, slow
+  // network, autoplay policy) block the rest of the page.
+  const playPromise=music.play();
+  if(playPromise && typeof playPromise.then==="function"){
+    playPromise.then(()=>{
+      musicPlaying=true;
+      musicBtn.textContent="🔊";
+      musicBtn.classList.add("playing");
+    }).catch(()=>{
+      musicPlaying=false;
+      musicBtn.textContent="♫";
+    });
   }
 }
 
-startBtn.addEventListener("click",async()=>{
-  await startMusic();
-
+startBtn.addEventListener("click",()=>{
+  // Reveal the story immediately — this must never depend on
+  // whether the background music loads or plays successfully.
   const journey=document.getElementById("journey");
   journey.classList.add("visible");
 
   setTimeout(()=>{
     journey.scrollIntoView({behavior:"smooth",block:"start"});
   },80);
+
+  // Music is best-effort and runs independently.
+  startMusic();
 });
 
-musicBtn.addEventListener("click",async()=>{
+musicBtn.addEventListener("click",()=>{
   if(musicPlaying){
     music.pause();
     musicPlaying=false;
     musicBtn.textContent="♫";
     musicBtn.classList.remove("playing");
   }else{
-    await startMusic();
+    startMusic();
   }
 });
 
@@ -1386,12 +1392,11 @@ function foreverAnswer(answer){
 Always us. Always together ♾️`;
     celebration(90);
   }else{
-    el.textContent=`Then I guess I’ll have to love you anyway… 🥺❤️
-Because I’ve always loved you without expecting anything in return. 🫶🏻`;
+    el.textContent=`Then I guess I'll have to love you anyway… 🥺❤️
+Because I've always loved you without expecting anything in return. 🫶🏻`;
   }
 }
 
 </script>
-</b>
 </body>
 </html>
